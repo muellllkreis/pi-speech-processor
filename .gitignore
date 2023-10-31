@@ -1,1 +1,9 @@
+.vscode
+*.pyc
+.env
+dist/
+/*.ipynb
+.DS_Store
+
+# Custom
 modal.token
