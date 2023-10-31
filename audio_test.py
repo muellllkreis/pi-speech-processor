@@ -2,6 +2,7 @@ import threading
 
 import numpy as np
 import sounddevice as sd
+import soundfile as sf
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 
 # Load model and processor
@@ -50,6 +51,7 @@ with sd.InputStream(samplerate=sampling_rate, channels=1) as stream:
 
 # Truncate zeros if stopped early
 audio_data = audio_data[: np.max(np.nonzero(audio_data)) + 1]
+sf.write("debug_audio.wav", audio_data, sampling_rate)
 
 # Process audio features
 input_features = processor(
