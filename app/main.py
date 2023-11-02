@@ -1,6 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
 
+from app.models.audio_model import AudioSample
+from app.services.audio_service import AudioService
+
+audio_service = AudioService()
 app = FastAPI()
 
 
@@ -10,8 +14,8 @@ def read_root():
 
 
 @app.post("/audio")
-def process_audio(audio_data: bytes):
-    return {"Hello": "World"}
+def process_audio(audio_sample: AudioSample) -> str:
+    return audio_service.transcribe(audio_sample)
 
 
 def start():

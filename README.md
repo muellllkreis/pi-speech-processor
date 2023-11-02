@@ -7,4 +7,5 @@
 
 ### Running the app
 
-`poetry run dev`
+- `poetry run dev` -> to start the API
+- `poetry run python audio_test.py` -> to test recording

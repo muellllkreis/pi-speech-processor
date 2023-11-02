@@ -1,13 +1,10 @@
 import threading
 
 import numpy as np
+import requests
 import sounddevice as sd
-import soundfile as sf
-from transformers import WhisperForConditionalGeneration, WhisperProcessor
 
-# Load model and processor
-processor = WhisperProcessor.from_pretrained("openai/whisper-tiny")
-model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-tiny")
+API_URL = "http://127.0.0.1:8000/audio"
 
 # Initialize audio recording parameters
 duration = 30  # seconds
@@ -51,16 +48,13 @@ with sd.InputStream(samplerate=sampling_rate, channels=1) as stream:
 
 # Truncate zeros if stopped early
 audio_data = audio_data[: np.max(np.nonzero(audio_data)) + 1]
-sf.write("debug_audio.wav", audio_data, sampling_rate)
 
-# Process audio features
-input_features = processor(
-    audio_data, sampling_rate=sampling_rate, return_tensors="pt"
-).input_features
+# Convert audio data to a list
+audio_list = audio_data.tolist()
 
-# Generate token IDs
-predicted_ids = model.generate(input_features)
+# Send a POST request to your FastAPI endpoint
+response = requests.post(API_URL, json={"audio_data": audio_list, "sampling_rate": sampling_rate})
+print(response.text)
 
-# Decode transcription
-transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)
-print(transcription)
+## UNCOMMENT BELOW FOR DEBUGGING
+# sf.write("debug_audio.wav", audio_data, sampling_rate)
